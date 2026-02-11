@@ -1,0 +1,13 @@
+node_modules
+dist
+.git
+.env
+.env.local
+*.log
+coverage
+tests
+.vscode
+.idea
+*.md
+!README.md
+.husky
