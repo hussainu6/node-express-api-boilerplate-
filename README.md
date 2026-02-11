@@ -5,7 +5,13 @@
 [![Node.js](https://img.shields.io/badge/Node.js-18+-green.svg)](https://nodejs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5+-blue.svg)](https://www.typescriptlang.org/)
 [![Express](https://img.shields.io/badge/Express-4-black.svg)](https://expressjs.com/)
+[![MongoDB](https://img.shields.io/badge/MongoDB-Database-green.svg)](https://www.mongodb.com/)
+[![Redis](https://img.shields.io/badge/Redis-Cache-red.svg)](https://redis.io/)
+[![Prisma](https://img.shields.io/badge/Prisma-ORM-2D3748.svg)](https://www.prisma.io/)
+[![Docker](https://img.shields.io/badge/Docker-Ready-2496ED.svg)](https://www.docker.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+![Star this repo](https://img.shields.io/github/stars/hussainu6/node-express-api-boilerplate-?style=social)
 
 A **Node.js**, **Express**, **TypeScript** backend boilerplate for building scalable REST APIs. Features **MongoDB** (Prisma ORM), **Redis** (cache & queues), **JWT** auth with refresh tokens, **role-based access control**, **Swagger** docs, and **Docker** support.
 

@@ -77,5 +77,29 @@
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
-  }
+  },
+  "author": "Uzair Hussain (hussainu6)",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hussainu6/node-express-api-boilerplate-.git"
+  },
+  "homepage": "https://github.com/hussainu6/node-express-api-boilerplate-#readme",
+  "bugs": {
+    "url": "https://github.com/hussainu6/node-express-api-boilerplate-/issues"
+  },
+  "keywords": [
+    "nodejs",
+    "express",
+    "typescript",
+    "rest-api",
+    "mongodb",
+    "redis",
+    "jwt",
+    "authentication",
+    "prisma",
+    "swagger",
+    "docker",
+    "boilerplate",
+    "starter"
+  ]
 }
