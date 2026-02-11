@@ -15,6 +15,7 @@ A **Node.js**, **Express**, **TypeScript** backend boilerplate for building scal
 
 - [Features](#features)
 - [Tech Stack](#tech-stack)
+- [Architecture](#architecture)
 - [Quick Start](#quick-start)
 - [Setup](#setup)
 - [API Endpoints](#api-endpoints)
@@ -53,6 +54,94 @@ A **Node.js**, **Express**, **TypeScript** backend boilerplate for building scal
 | Validation| Zod                           |
 | Docs      | Swagger / OpenAPI 3           |
 | Container | Docker, docker-compose        |
+
+---
+
+## Architecture
+
+### High-Level Flow
+
+```
+┌─────────────┐     ┌─────────────┐     ┌──────────────────────┐
+│   Client    │────▶│  Express    │────▶│  Routes / Middleware │
+│ (Web/Mobile)│     │   Server    │     │  (Auth, Validation)  │
+└─────────────┘     └─────────────┘     └──────────┬───────────┘
+                                                    │
+         ┌──────────────────────────────────────────┼─────────────────────────────────────────┐
+         ▼                                          ▼                                          ▼
+┌─────────────────┐                    ┌─────────────────────┐                    ┌─────────────────────┐
+│   Controllers   │                    │   Modules (Service) │                    │   Cache (Redis)     │
+│  auth, profile, │───────calls───────▶│  auth, user, role   │───────writes───────▶│  refresh tokens,    │
+│  users          │                    │                     │                    │  blacklist, OTP,   │
+└────────┬────────┘                    └──────────┬──────────┘                    │  rate limit         │
+         │                                        │                               └─────────────────────┘
+         │                                        ▼
+         │                               ┌─────────────────────┐
+         │                               │  Database (MongoDB) │
+         │                               │  Prisma ORM         │
+         │                               └─────────────────────┘
+         │
+         └───────────────────▶ Response (JSON)
+```
+
+### Project Structure
+
+```
+src/
+├── api/                    # API layer
+│   ├── web/v1/            # Web/Dashboard API
+│   │   ├── controllers/   # Request handlers
+│   │   └── routes/       # Route definitions
+│   └── mobile/v1/         # Mobile API (separate rate limits)
+│       ├── controllers/
+│       └── routes/
+├── app.ts                  # Express app setup
+├── server.ts               # Entry point
+├── config/                # Environment & config
+├── modules/                # Business logic (services)
+│   ├── auth/              # Auth service, tokens
+│   ├── user/              # User CRUD
+│   └── role/              # Roles & permissions
+├── common/                 # Shared utilities
+│   ├── errors/            # AppError, error codes
+│   ├── guards/            # requirePermission, requireOwnership
+│   ├── middlewares/       # auth, validate, rateLimit, errorHandler
+│   ├── validators/        # Zod schemas
+│   └── utils/             # Response helpers
+├── cache/                  # Redis operations
+│   ├── blacklist.ts       # Token blacklist (logout)
+│   ├── refresh.ts         # Refresh token storage
+│   ├── rateLimit.ts       # Rate limiting
+│   └── otp.ts             # OTP storage
+├── health/                 # Health check endpoint
+├── docs/                   # Swagger setup
+└── jobs/                   # BullMQ job queues
+```
+
+### Request Flow
+
+1. **Request** → Express (Helmet, CORS, HPP, JSON parser)
+2. **Request ID** → Unique ID for tracing
+3. **Rate Limit** → Web/Mobile specific limits
+4. **Route** → Matched by path (`/api/web/v1/*` or `/api/mobile/v1/*`)
+5. **Validation** → Zod schema (body, query)
+6. **Auth** → JWT verify (`requireAuth` middleware)
+7. **Guards** → `requirePermission`, `requireOwnership` (if needed)
+8. **Controller** → Calls service layer
+9. **Service** → Business logic, Prisma + Redis
+10. **Response** → JSON (`{ success, data, meta }`)
+11. **Error** → `errorHandler` catches and formats errors
+
+### Layer Responsibilities
+
+| Layer       | Responsibility                          |
+|------------|------------------------------------------|
+| **Routes** | Define paths, apply middlewares         |
+| **Controllers** | Parse request, call services, send response |
+| **Services** | Business logic, DB/Redis access        |
+| **Guards** | Permission & ownership checks           |
+| **Middleware** | Auth, validation, rate limit, errors   |
+| **Cache**  | Redis: tokens, OTP, rate limit, locks   |
 
 ---
 
